@@ -1,3 +1,5 @@
+var bubbleSize = 40;
+
 function relMouseCoords(event){
     var totalOffsetX = 0;
     var totalOffsetY = 0;
@@ -226,9 +228,11 @@ Grid.prototype.getBubbleDownRight=function(i,j){
 Grid.prototype.addBubble = function(bubble,i,j){
     if(i<=this.rows && j<= this.cols){
         //console.log("posicion luego de step: " + bubble.p.x + ", " + bubble.p.y);
-        if(this.slots[i][j]== null)
+        if(this.slots[i][j]== null) {
             this.slots[i][j] = bubble;
-        else throw {error:"El slot no estava vacio",oldBubble:this.slots[i][j],newBubble:bubble};
+        } else {
+            //throw {error:"El slot no estava vacio",oldBubble:this.slots[i][j],newBubble:bubble};
+        }
         var wpos = this.getCoordForPos(i,j);
         bubble.p.x = wpos.x+this.bw/2;
         bubble.p.y = wpos.y+this.bh/2;
@@ -237,7 +241,7 @@ Grid.prototype.addBubble = function(bubble,i,j){
 };
 
 Grid.prototype.removeBubble = function(i,j){
-        this.slots[i][j] = null;
+    this.slots[i][j] = null;
 };
 
 Grid.prototype.getAdjacentBubbles = function(i,j){
@@ -267,12 +271,13 @@ Grid.prototype.markBubble2 = function(i,j){
 
 Grid.prototype.markBubble = function(i,j,value){
     this.slots[i][j].setMarked(true);
+    console.log(i);
     this.marked.push({i:i,j:j});
     var adj = this.getAdjacentBubbles(i,j);
 
     for(var i=0; i<adj.length;i++)
         if((adj[i].mark==false) && (adj[i].value == value)){
-//          console.log("marcar!");
+            //console.log("marcar!");
             var pos = this.getCellIndexForCoord(adj[i].p.x,adj[i].p.y);   
             this.markBubble(pos.i,pos.j,value);
         }
@@ -552,16 +557,9 @@ Alarm.prototype.getRemaining = function(){
 
 var Renderer = (function(){
 
-    var drawBoard = function(dc,x,y,w,h){
-        dc.fillStyle = "rgb(20,20,250)";        
-        dc.fillRect(0,0,w,h);
-    }
-
-    var color = ["rgba(255,0,0,0.5)","green","blue","yellow","white"];
-    var bw = 25;
-    var bh = 25;
-    var greenBubble = document.createElement('canvas');
-    var redBubble = document.createElement('canvas');
+    var color = ["red","green","blue","yellow","white"];
+    var bw = bubbleSize;
+    var bh = bubbleSize;
     var bubblesRenders = []; 
     
 
@@ -579,8 +577,8 @@ var Renderer = (function(){
             dc.strokeStyle = "#00FF00";
             dc.strokeRect(-bubble.r,-bubble.r,bubble.r*2,bubble.r*2);
         }
-        dc.strokeStyle = "#FF0000";
-        dc.strokeRect(0,0,1,1);
+        //dc.strokeStyle = "#FF0000";
+        //dc.strokeRect(0,0,1,1);
     };
 
     //prerender de bolas
@@ -620,10 +618,10 @@ var Renderer = (function(){
         },
         
         drawBoard:function(dc,x,y,w,h){
-            dc.fillStyle = "rgb(100,100,100)";
-            dc.fillRect(0,0,w,h);
-            dc.strokeStyle = "rgb(0,0,0)";
-            dc.strokeRect(0,0,w,h);
+            //dc.fillStyle = "rgba(100,100,100,0)";
+            dc.clearRect(0,0,w,h);
+            //dc.strokeStyle = "rgba(0,0,0,0)";
+            //dc.strokeRect(0,0,w,h);
         },
         
         drawWorld:function(world,dc,dc2){
@@ -632,7 +630,7 @@ var Renderer = (function(){
             Renderer.drawBoard(dc,world.x,world.y,world.w,world.h);
             
             //Dibujo las lineas de la grilla de burbujas
-            dc.strokeStyle = "#555555";
+            dc.strokeStyle = "rgba(0,0,0,0)";
             for(var i=0; i<world.bubblegrid.slots.length;i++)
                 for(var j=0; j<world.bubblegrid.slots[i].length;j++){
                     var pos = world.bubblegrid.getCoordForPos(i,j);
@@ -671,7 +669,7 @@ var Renderer = (function(){
 //            Renderer.drawText("Bubbles: " + world.bubbles.length,10,372);
             Renderer.drawText("Firing: " + (world.firedBubbles.length>0),10,384);
             Renderer.drawText("Points: " + world.points,10,396);
-            Renderer.drawText("Time: " + Math.floor(world.endGameAlarm.getRemaining()/1000),10,350);
+            //Renderer.drawText("Time: " + Math.floor(world.endGameAlarm.getRemaining()/1000),10,350);
     
             //Dibujo textos flotantes de los puntajes
             Renderer.setTextFont("15px italic arial,sans-serif strong","rgb(0,0,0)");
@@ -719,8 +717,8 @@ function World(w,h){
     });
 }
 
-World.prototype.bw = 25;
-World.prototype.bh = 25;
+World.prototype.bw = bubbleSize;
+World.prototype.bh = bubbleSize;
 
 World.states = {
     GAME_OVER:0,
@@ -770,9 +768,10 @@ World.prototype.setup = function(){
     var grid = this.bubblegrid;
     this.endGameCallback = function(){
         grid.popAllBubbles();
+        console.log("game over");
     }
-    this.endGameAlarm = new Alarm(60000,this.endGameCallback);
-    this.endGameAlarm.start();
+    //this.endGameAlarm = new Alarm(60000,this.endGameCallback);
+    //this.endGameAlarm.start();
     this.quantum = 1000/180;
     this.state = World.states.RUNNING;
 }
@@ -795,7 +794,7 @@ World.prototype.step = function(dt){
         this.bubblegrid.step(dt);
         this.stepFreeBubbles(dt);
         this.pointTexts.step(dt);
-        this.endGameAlarm.step(dt);
+        //this.endGameAlarm.step(dt);
     }
     
 }
@@ -911,6 +910,9 @@ var init = function(){
 
     var c = document.getElementById("c");
     var c2 = document.getElementById("c2");
+
+    c.height = c2.height = window.innerHeight;
+    c.width = c2.width = window.innerHeight/4*3;
             
     dc = c.getContext("2d");
     dc2 = c2.getContext("2d");

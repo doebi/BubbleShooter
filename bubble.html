@@ -16,7 +16,6 @@
         position:absolute;
         top:0px;
         left:0px;
-        border:1px solid;
     }
 
     
@@ -54,11 +53,13 @@
         background-color:rgba(0,0,128,1);        
     }
 
+    body {
+        margin: 0px auto;
+    }
     
  </style>
 </head>
 <body>
-<h1 style="text-align:center;">Bubbles</h1>
 <div id="container">
     <canvas id="c" width="300" height="400" ></canvas>
     <canvas id="c2" width="300" height="400"></canvas>
@@ -68,8 +69,8 @@
         <li id="action_about">About</li>
     </ul>
 </div>
-<!--
-<textarea cols="100" rows="23" id="console" disabled="disabled" style="background:#000000; color:#00FF00"></textarea>
--->
+<script type="text/javascript" charset="utf-8">
+window.onload = init();
+</script>
 </body>
 </html>
