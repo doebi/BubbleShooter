@@ -6,68 +6,44 @@
 <script src="bubble.js"></script>
  <style type="text/css">
     #container {
-        position:relative;
-        margin-left:auto;
-        margin-right:auto;
-        width:300px;
+        position: relative;
+        width: 670px;
+        margin: 0px auto;
+        padding: 0px;
     }
 
-    canvas {
-        position:absolute;
-        top:0px;
-        left:0px;
+    .wall {
+        width: 35px;
+        background-image: url("images/wall.png");
+        background-repeat: repeat-y;
     }
-
-    
-    
-    #menu-items {
-        position:absolute;
-        top:100px;
-        left:100px;
-        width:200px;
-        padding:0px;
-        margin:0px;
-        list-style-type: none;
-        background-color:rgba(0,0,128,0.6);
-        border-radius: 8px;
-    }
-
- 
-    #menu-items li{
-        display:block;
-        margin-top: 10px;
-        margin-bottom: 10px;
-        background-color:rgba(0,0,180,0.7);
-        font-family: sans-serif;
-        color: #FFF;
-        width:86%;
-        margin-left:7%;
-        height:50px;
-        line-height:50px;
-        text-align:center;
-        border:1px solid #00F;
-        border-radius: 8px;
-    }
-    
-    #menu-items li:hover{
-        background-color:rgba(0,0,128,1);        
+    .flip {
+        -webkit-transform: rotate(180deg);
+        -moz-transform: rotate(180deg);
     }
 
     body {
         margin: 0px auto;
     }
-    
  </style>
 </head>
 <body>
 <div id="container">
-    <canvas id="c" width="300" height="400" ></canvas>
-    <canvas id="c2" width="300" height="400"></canvas>
-    <ul id="menu-items" >
-        <li id="action_restart">Restart</li>
-        <li id="action_resume">Resume</li>
-        <li id="action_about">About</li>
-    </ul>
+    <table border="0" cellspacing="0" cellpadding="0">
+        <tr>
+            <td colspan="3">
+                <h3>Points: <span id="points"></span></h3>        
+            </td>
+        </tr>
+        <tr>
+            <td class="wall"></td>
+            <td>
+                <canvas id="c" width="600" height="800" ></canvas>
+                <canvas style="display: none" id="c2" width="600" height="800"></canvas>
+            </td>
+            <td class="wall flip"></td>
+        </tr>
+    </table>
 </div>
 <script type="text/javascript" charset="utf-8">
 window.onload = init();
