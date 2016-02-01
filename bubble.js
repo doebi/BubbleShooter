@@ -603,7 +603,7 @@ var Renderer = (function(){
         
         drawBoard:function(dc,x,y,w,h){
             dc.clearRect(0,0,w,h);
-            dc.fillStyle = "rgba(100,100,100,1)";
+            dc.fillStyle = "#9da1b4";
             dc.fillRect(0,0,w,h);
             dc.strokeStyle = "rgba(255,0,0,0.75)";
             dc.lineWidth = 6;
@@ -611,6 +611,7 @@ var Renderer = (function(){
             dc.moveTo(0, 725);
             dc.lineTo(600, 725);
             dc.stroke();
+            dc.lineWidth = 1.5;
             dc.closePath();
             //dc.strokeRect(0,0,w,h);
         },
@@ -626,12 +627,14 @@ var Renderer = (function(){
             //dc.stroke();
             
             //Dibujo las lineas de la grilla de burbujas
+            /*
             dc.strokeStyle = "rgba(0,0,0,1)";
             for(var i=0; i<world.bubblegrid.slots.length;i++)
                 for(var j=0; j<world.bubblegrid.slots[i].length;j++){
                     var pos = world.bubblegrid.getCoordForPos(i,j);
-                    //dc.strokeRect(pos.x,pos.y,world.bw,world.bh);                        
+                    dc.strokeRect(pos.x,pos.y,world.bw,world.bh);                        
                 }
+            */
                 
             //Dibujo las burbujas de la grilla
             var dx = (world.bubblegrid.state == Grid.prototype.states.SHAKING)?Math.sin(world.bubblegrid.shakeRot)*world.bw/6:0;
@@ -643,8 +646,8 @@ var Renderer = (function(){
                         var b = world.bubblegrid.slots[i][j];
                         /* this renders more correct, but seems to fuck up the collision detection
                          * TODO: more investigation needed */
-                        //Renderer.drawBubbleXY(b,dc,b.p.x,b.p.y*.85);
                         Renderer.drawBubbleXY(b,dc,b.p.x,b.p.y);
+                        //Renderer.drawBubbleXY(b,dc,b.p.x,b.p.y);
                     }
             dc.restore();
             
