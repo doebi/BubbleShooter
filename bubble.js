@@ -126,7 +126,6 @@ Grid.prototype.getCoordForPos = function(i,j){
 Grid.prototype.getCellIndexForCoord = function(x,y){
     var row = Math.floor((y-this.baseY)/this.bw);
     var col = Math.floor((x-this.bw/2*(row - 2*Math.floor(row/2)))/this.bw);
-    //if();
     return (row>=0 && col>=0)?{i:row,j:col}:null;
 }
 
@@ -251,10 +250,6 @@ Grid.prototype.markBubble2 = function(i,j){
         }
 };
 
-
-
-
-
 Grid.prototype.markBubble = function(i,j,value){
     this.slots[i][j].setMarked(true);
     this.marked.push({i:i,j:j});
@@ -269,7 +264,7 @@ Grid.prototype.markBubble = function(i,j,value){
 };
 
 Grid.prototype.popMarkedBubbles = function(){
-    console.log("popping " +  this.marked.length + " bubbles");
+    //console.log("popping " +  this.marked.length + " bubbles");
     if(this.marked.length>2)
         for(var i = 0; i<this.marked.length;i++){
             var p = this.marked[i];
@@ -281,7 +276,7 @@ Grid.prototype.popMarkedBubbles = function(){
 }
 
 Grid.prototype.popAllBubbles = function(){
-    console.log("popping all bubbles");
+    //console.log("popping all bubbles");
     for(var i = 0; i < this.slots.length; i++)
         for (var j = 0; j < this.slots[0].length; j++)
             if(this.slots[i][j]){
@@ -603,13 +598,13 @@ var Renderer = (function(){
         
         drawBoard:function(dc,x,y,w,h){
             dc.clearRect(0,0,w,h);
-            dc.fillStyle = "#9da1b4";
-            dc.fillRect(0,0,w,h);
+            //dc.fillStyle = "#9da1b4";
+            //dc.fillRect(0,0,w,h);
             dc.strokeStyle = "rgba(255,0,0,0.75)";
             dc.lineWidth = 6;
             dc.beginPath();
-            dc.moveTo(0, 725);
-            dc.lineTo(600, 725);
+            dc.moveTo(0, 735);
+            dc.lineTo(600, 735);
             dc.stroke();
             dc.lineWidth = 1.5;
             dc.closePath();
@@ -646,8 +641,8 @@ var Renderer = (function(){
                         var b = world.bubblegrid.slots[i][j];
                         /* this renders more correct, but seems to fuck up the collision detection
                          * TODO: more investigation needed */
-                        Renderer.drawBubbleXY(b,dc,b.p.x,b.p.y);
                         //Renderer.drawBubbleXY(b,dc,b.p.x,b.p.y);
+                        Renderer.drawBubbleXY(b,dc,b.p.x,b.p.y);
                     }
             dc.restore();
             
@@ -798,7 +793,6 @@ World.prototype.step = function(dt){
         this.bubblegrid.step(dt);
         this.stepFreeBubbles(dt);
         this.pointTexts.step(dt);
-        //this.endGameAlarm.step(dt);
     }
     
 }
@@ -851,26 +845,31 @@ World.prototype.testCollision = function(){
                 }
             }
           
-          if(collides||(b.p.y<this.bh+this.bubblegrid.baseY)){
+          if(collides||(b.p.y < this.bh+this.bubblegrid.baseY)){
                 var pos = this.bubblegrid.getCellIndexForCoord(b.p.x,b.p.y);
-                //evito que se agrege a una celda no habilitada
                 if (pos == null) pos = this.bubblegrid.getCellIndexForCoord(b.p.x+b.r,b.p.y);
                 if (pos.j >= this.bubblegrid.slots[pos.i].length)  pos.j = pos.j-1;
-                
                 this.bubblegrid.addBubble(b,pos.i,pos.j);
-                this.bubblegrid.markBubble(pos.i,pos.j,b.value);
-                this.bubblegrid.popMarkedBubbles();
-                this.bubblegrid.clearMarkedBubbles();
-                this.bubblegrid.detachOrphanBubbles();
-                this.firedBubbles.pop();
-                this.moveGrid();
-                this.points += this.newpoints*10;
-                if (this.newpoints > 3) {
-                    var bonus = this.newpoints;
-                    this.points += bonus;
-                    console.log(bonus);
+
+                if (b.p.y > 735) { // check if newly placed bubble is out of range
+                    this.endGameCallback();
+                } else {
+                    this.bubblegrid.markBubble(pos.i,pos.j,b.value);
+                    this.bubblegrid.popMarkedBubbles();
+                    this.bubblegrid.clearMarkedBubbles();
+                    this.bubblegrid.detachOrphanBubbles();
+                    this.firedBubbles.pop();
+                    this.moveGrid();
+                    this.points += this.newpoints*10;
+                    // bonus points
+                    // pretty simple as of now..
+                    if (this.newpoints > 3) {
+                        var bonus = this.newpoints;
+                        this.points += bonus;
+                        this.pointTexts.addTextSprite(new TextSprite(b.p.x,b.p.y+40,0.02,-0.04,String(bonus)));
+                    }
+                    this.newpoints = 0;
                 }
-                this.newpoints = 0;
           }
     }
 }
