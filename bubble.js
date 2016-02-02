@@ -540,6 +540,8 @@ var Renderer = (function(){
     var bw = bubbleSize;
     var bh = bubbleSize;
     var bubblesRenders = []; 
+    var beam = new Image(70, 70);
+    beam.src = 'images/beam.png';
     
 
     var drawBubble = function(bubble,dc){
@@ -596,10 +598,13 @@ var Renderer = (function(){
             dc.restore();
         },
         
-        drawBoard:function(dc,x,y,w,h){
+        drawBoard:function(dc,y,w,h){
             dc.clearRect(0,0,w,h);
             //dc.fillStyle = "#9da1b4";
             //dc.fillRect(0,0,w,h);
+            for (var i = 0; i < 9; i++) {
+                dc.drawImage(beam, i*70,y-60,70,70);
+            }
             dc.strokeStyle = "rgba(255,0,0,0.75)";
             dc.lineWidth = 6;
             dc.beginPath();
@@ -614,7 +619,7 @@ var Renderer = (function(){
         drawWorld:function(world,dc,dc2){
         
             //Dibujo el tablero
-            Renderer.drawBoard(dc,world.x,world.y,world.w,world.h);
+            Renderer.drawBoard(dc,world.bubblegrid.baseY,world.w,world.h);
 
             //dc.beginPath();
             //dc.moveTo(0, 0);
