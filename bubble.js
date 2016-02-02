@@ -767,8 +767,13 @@ World.prototype.setup = function(){
     var grid = this.bubblegrid;
     this.endGameCallback = function(){
         grid.popAllBubbles();
+        // grid.freezeAllBubbles();
+        // do this to highlight the mistake?
         console.log("game over");
-    }
+    };
+    this.wonGameCallback = function(){
+        console.log("game won");
+    };
     //this.endGameAlarm = new Alarm(60000,this.endGameCallback);
     //this.endGameAlarm.start();
     this.quantum = 1000/180;
@@ -869,6 +874,9 @@ World.prototype.testCollision = function(){
                         this.pointTexts.addTextSprite(new TextSprite(b.p.x,b.p.y+40,0.02,-0.04,String(bonus)));
                     }
                     this.newpoints = 0;
+                    if (this.bubblegrid.getBubblesValues().length == 0) { //check if there are no bubbles left
+                        this.wonGameCallback();
+                    }
                 }
           }
     }
